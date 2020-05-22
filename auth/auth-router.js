@@ -8,8 +8,8 @@ const route = express.Router();
 
 route.post("/register", (req, res) => {
   const credentials = req.body;
-  //   const hash = bcrypt.hashSync(credentials.password, 8);
-  //   credentials.password = hash;
+  const hash = bcrypt.hashSync(credentials.password, 8);
+  credentials.password = hash;
   User.add(credentials)
     .then((user) => {
       res.status(201).json(user);
