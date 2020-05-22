@@ -1,5 +1,7 @@
 const supertest = require("supertest");
 const server = require("../api/server");
+const db = require("../database/dbConfig");
+const users = require("./user-model");
 
 describe("sever.js", () => {
   describe("GET /api/jokes", () => {
@@ -22,41 +24,54 @@ describe("sever.js", () => {
   });
 
   describe("POST /api/auth/register", () => {
-    it("should create a new user and return 201 status code", () => {
+    it("should create a new user and return 500 status code", async () => {
       return supertest(server)
         .post("/api/auth/register")
         .then((response) => {
-          expect(response.status).toBe(201);
+          expect(response.status).toBe(500);
         });
     });
   });
 
-  //   describe("POST /api/auth/", () => {
-  //     it("should return a 201 status code", () => {
-  //       return supertest(server)
-  //         .post("/api/auth/register")
-  //         .then((res) => {
-  //           expect(typeof res.body[0]).toBe("number");
-  //         });
-  //     });
-  //   });
+  describe("POST /api/auth/register", () => {
+    it("it should add a new user", async () => {
+      await db("users").truncate();
+      const newUser = await users.add({
+        username: "testing11",
+        password: "testing11",
+      });
+      const obj = await db("users");
+      expect(obj).toHaveLength(1);
+    });
+  });
 
-  //   describe("POST /api/auth/login", () => {
-  //     it("should login and send back token with status code of 200", () => {
-  //       return supertest(server)
-  //         .post("/api/auth/login")
-  //         .then((response) => {
-  //           expect(response.status).toBe(200);
-  //         });
-  //     });
-  //   });
-  //   describe("POST /api/auth/login", () => {
-  //     it("should return an object with 2 properties ", () => {
-  //       return supertest(server)
-  //         .post("/api/auth/login")
-  //         .then((res) => {
-  //           expect(Object.keys(res.body)).toHaveLength(2);
-  //         });
-  //     });
-  //   });
+  describe("POST /api/auth/register", () => {
+    it("it should an array with an object in it", async () => {
+      await db("users").truncate();
+      const newUser = await users.add({
+        username: "testing11",
+        password: "testing11",
+      });
+      const array = await db("users");
+      expect(Array.isArray(array)).toBe(true);
+    });
+  });
+
+  describe("POST /api/auth/login", () => {
+    it("should return an array", async () => {
+      await db("users").truncate();
+      const newUser = await users.findBy({ username: "testing11" });
+      const obj = await db("users");
+      expect(Array.isArray(obj)).toBe(true);
+    });
+  });
+
+  describe("POST /api/auth/login", () => {
+    it("should return an empty array", async () => {
+      await db("users").truncate();
+      const newUser = await users.findBy({ username: "testing11" });
+      const array = await db("users");
+      expect(array).toHaveLength(0);
+    });
+  });
 });
