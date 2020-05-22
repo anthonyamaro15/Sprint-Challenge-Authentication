@@ -11,8 +11,8 @@ route.post("/register", (req, res) => {
   const hash = bcrypt.hashSync(credentials.password, 8);
   credentials.password = hash;
   User.add(credentials)
-    .then((user) => {
-      res.status(201).json(user);
+    .then((users) => {
+      res.status(201).json(users);
     })
     .catch((err) => {
       res.status(500).json(err);
